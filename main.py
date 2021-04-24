@@ -5,28 +5,43 @@ import time
 from datetime import datetime
 from bs4 import BeautifulSoup as bs
 
-URL = 'https://mangapill.com/manga/524/black-clover'
+class Manga: 
+
+    base_url = 'https://mangapill.com/manga/'
+       
+    def __init__(self, manga_id):
+        self.last_chapter = 0
+        self.mid = manga_id
+    
+    def checkManga(self):
+        page = requests.get(self.base_url + self.mid)
+        soup = bs(page.content, 'html.parser')
+        html = list(soup.children)[3]
+        chapter = html.find('a', class_='py-1 px-2 border border-color-border-secondary rounded text-sm')
+        chapter_name = list(chapter.children)[1].text
+        chapter_link = 'https://mangapill.com' + chapter['href']
+
+        if (self.last_chapter == 0) or (self.last_chapter != chapter_name):
+            self.last_chapter = chapter_name
+            message = '[!] New Chapter is available: \n- {} \n- {}'.format(chapter_name, chapter_link)
+            print(message)
+            #telegram_send.send(messages=[message])
+        else:
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            log.info('[{}] No new chapter found for Manga {}'.format(dt_string, self.mid))
+
 log.basicConfig(level=log.INFO)
 
-last_chapter = 0
+manga_ids = []
+mangas = []
+
+for manga_id in manga_ids:
+    mangas.append(Manga(manga_id))
 
 while True:
-    page = requests.get(URL)
-
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
-    soup = bs(page.content, 'html.parser')
-    html = list(soup.children)[3]
-    chapter = html.find('a', class_='py-1 px-2 border border-color-border-secondary rounded text-sm')
-    chapter_name = list(chapter.children)[1].text
-    chapter_link = 'https://mangapill.com' + chapter['href']
-
-    if (last_chapter == 0) or (last_chapter != chapter_name):
-        last_chapter = chapter_name
-        message = '[!] New Black Clover Chapter is available: \n- {} \n- {}'.format(chapter_name, chapter_link)
-        telegram_send.send(messages=[message])
-    else:
-        log.info('[{}] No new chapter found'.format(dt_string))
+    for manga in mangas:
+        manga.checkManga()
+        time.sleep(2)
         
     time.sleep(3600)
