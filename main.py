@@ -24,8 +24,7 @@ class Manga:
         if (self.last_chapter == 0) or (self.last_chapter != chapter_name):
             self.last_chapter = chapter_name
             message = '[!] New Chapter is available: \n- {} \n- {}'.format(chapter_name, chapter_link)
-            print(message)
-            #telegram_send.send(messages=[message])
+            telegram_send.send(messages=[message])
         else:
             now = datetime.now()
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
