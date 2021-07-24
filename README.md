@@ -3,9 +3,10 @@ Simple Notification System for new Manga Chapters using telegram-chat
 
 # How to use
 1. Create bot using https://telegram.me/BotFather
-2. Add ID of manga to mangas_id array ex.
+2. Rename `env` to `.env`
+3. Modify `MANGA_IDS` variable ex.
 ```
-manga_ids = ['524', '525', '526']
+MANGA_IDS=524,5292
 ```
 3. Linux Setup
 ```
